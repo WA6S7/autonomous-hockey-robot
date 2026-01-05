@@ -14,6 +14,26 @@ The work focuses on providing a **stable, realistic simulation** that other team
 
 ---
 
+## Required Packages & Dependencies
+
+sudo apt update && sudo apt install -y \
+  ros-jazzy-desktop \
+  ros-jazzy-ros-gz \
+  ros-jazzy-xacro \
+  ros-jazzy-robot-state-publisher \
+  ros-jazzy-joint-state-publisher \
+  ros-jazzy-tf2-tools \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-geometry-msgs \
+  ros-jazzy-nav-msgs \
+  python3-colcon-common-extensions \
+  python3-rosdep \
+  gz-sim
+
+
+
+---
+
 ## Responsibilities
 
 ### 1. Robot Modelling (URDF/Xacro)
