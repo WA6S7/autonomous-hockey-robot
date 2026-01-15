@@ -1,0 +1,89 @@
+================================
+DO BEFORE RUNNING
+================================
+Gazebo:
+colcon build
+source /opt/ros/jazzy/setup.bash
+source install/setup.bash 
+
+
+
+================================
+TO RUN IN ONE TERMINAL:
+(hockey_robot_description DEPENDS ON YOUR WORKSPACE)
+================================
+
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 launch hockey_robot_description hockey_bringup.launch.py use_sim_time:=false
+
+
+
+
+================================
+TO RUN IN DIFFERENT TERMINALS:
+(hockey_robot_description DEPENDS ON YOUR WORKSPACE)
+================================
+--------------------------------
+Launch robots and world:
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 launch hockey_robot_description spawn_robots.launch.py 
+
+Bridge:
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash 
+ros2 launch hockey_robot_description bridge.launch.py
+
+Rviz (not necessary to run):
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+rviz2                                      ########################
+
+Tracking:
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 run hockey_perception lidar_puck_detector --ros-args \
+  -r __node:=lidar_puck_detector_r1 \
+  -p scan_topic:=/robot1/scan \
+  -p puck_pose_topic:=/robot1/puck_pose_lidar
+
+ros2 run hockey_perception lidar_puck_detector --ros-args \
+  -r __node:=lidar_puck_detector_r2 \
+  -p scan_topic:=/robot2/scan \
+  -p puck_pose_topic:=/robot2/puck_pose_lidar
+
+Confirm the pose is being detected (not necessary to run):
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 topic hz /robot1/puck_pose_lidar      ########################
+
+See where the puck is being seen (not necessary to run):
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 topic echo /robot1/puck_pose_lidar    ########################
+
+Run chase puck script:
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 run hockey_perception puck_chaser --ros-args \
+  -p target_topic:=/robot1/puck_pose_lidar \
+  -p cmd_vel_topic:=/robot1/cmd_vel \
+  -p use_sim_time:=false
+
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 run hockey_perception puck_chaser --ros-args \
+  -p target_topic:=/robot2/puck_pose_lidar \
+  -p cmd_vel_topic:=/robot2/cmd_vel \
+  -p use_sim_time:=false
+
+Confirm the robot cmd_vel is updating:
+--------------------------------
+source ~/autonomous-hockey-robot/install/setup.bash
+ros2 topic hz /robot1/cmd_vel
+
+
+
+
+
+Git push password thing:
+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

@@ -15,7 +15,7 @@ def generate_launch_description():
     spawn_launch = PathJoinSubstitution([pkg_share, "launch", "spawn_robots.launch.py"])
     bridge_launch = PathJoinSubstitution([pkg_share, "launch", "bridge.launch.py"])
 
-    # Perception + control nodes (two instances each)
+    # Perception and control nodes (two instances each)
     detector_r1 = Node(
         package="hockey_perception",
         executable="lidar_puck_detector",
@@ -67,7 +67,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="true"),
 
-        # Start Gazebo + spawn robots
+        # Start Gazebo and spawn robots
         IncludeLaunchDescription(PythonLaunchDescriptionSource(spawn_launch)),
 
         # Start bridges

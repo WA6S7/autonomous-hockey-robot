@@ -13,12 +13,11 @@ def polar_to_xy(r: float, a: float) -> Tuple[float, float]:
 
 class LidarPuckDetector(Node):
     """
-    Detect a small object (now a *ball*) as a compact cluster in a 2D LaserScan.
+    Detecting a small object (the ball) as a compact cluster in a 2D LaserScan.
 
     A 2D lidar is a single scan plane at the lidar's mounting height. For a sphere resting on the ground,
     the "apparent" diameter seen by that scan plane can be smaller than the sphere's full diameter if
-    the scan plane cuts the sphere above its equator. If detection is unreliable, tune `puck_diameter`
-    to the diameter of the *intersection circle* at the scan height.
+    the scan plane cuts the sphere above its equator. 
 
     Publishes:
       - puck_pose (PoseStamped) in the scan frame (LaserScan.header.frame_id)
@@ -36,12 +35,12 @@ class LidarPuckDetector(Node):
         # IMPORTANT: Despite the name, `puck_diameter` is the expected apparent diameter in the 2D scan plane.
         # For a ball (sphere), that may be less than the real sphere diameter depending on lidar height.
         #
-        self.declare_parameter('puck_diameter', 0.3)           # meters (tune to your ball; see docstring)
+        self.declare_parameter('puck_diameter', 0.3)            # in meters 
         self.declare_parameter('diameter_tol', 0.06)            # +/- tolerance in meters
         self.declare_parameter('cluster_gap', 0.05)             # split clusters if adjacent points separated by this (m)
         self.declare_parameter('min_points', 3)                 # reject tiny clusters
-        self.declare_parameter('range_min', 0.10)               # ignore anything closer than this (m)
-        self.declare_parameter('range_max', 6.0)                # ignore anything beyond this (m)
+        self.declare_parameter('range_min', 0.02)               # ignore anything closer than this (m)
+        self.declare_parameter('range_max', 8.0)                # ignore anything beyond this (m)
 
         scan_topic = self.get_parameter('scan_topic').value
         pose_topic = self.get_parameter('puck_pose_topic').value
@@ -55,7 +54,7 @@ class LidarPuckDetector(Node):
         rmin = float(self.get_parameter('range_min').value)
         rmax = float(self.get_parameter('range_max').value)
 
-        # Convert to XY (valid points only). Keep invalids as NaN to force cluster breaks.
+        # Converting to XY (valid points only). Keeping invalids as NaN to force cluster breaks.
         points: List[Tuple[float, float]] = []
 
         a = msg.angle_min
@@ -123,7 +122,7 @@ class LidarPuckDetector(Node):
 
     @staticmethod
     def _cluster_width_bbox_diag(c: List[Tuple[float, float]]) -> float:
-        # Robust "diameter" proxy: diagonal of axis-aligned bounding box.
+        # Computing a single scalar 'width'
         xs = [p[0] for p in c]
         ys = [p[1] for p in c]
         return math.hypot(max(xs) - min(xs), max(ys) - min(ys))
@@ -135,9 +134,9 @@ class LidarPuckDetector(Node):
         tol: float,
         min_pts: int,
     ) -> Optional[Tuple[float, float]]:
-        """
-        Choose the best cluster matching the expected apparent diameter, return centroid (x,y).
-        """
+        
+        # Choosing the best cluster matching the expected apparent diameter, and returning centroid (x,y).
+        
         best_score = float('inf')
         best_centroid: Optional[Tuple[float, float]] = None
 
@@ -166,7 +165,7 @@ class LidarPuckDetector(Node):
                 best_score = score
                 best_centroid = (cx, cy)
 
-        return best_centroid
+        return best_centroid   
 
 
 def main():
