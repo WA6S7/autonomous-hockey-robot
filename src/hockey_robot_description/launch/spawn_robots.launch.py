@@ -23,13 +23,13 @@ def generate_launch_description():
     robot1_desc = Command([
         xacro_exec, " ",
         xacro,
-        " prefix:=robot1_"
+        " prefix:=robot1_ ns:=robot1"
     ])
 
     robot2_desc = Command([
         xacro_exec, " ",
         xacro,
-        " prefix:=robot2_"
+        " prefix:=robot2_ ns:=robot2"
     ])
 
 
@@ -37,7 +37,7 @@ def generate_launch_description():
 
         # Start Gazebo
         ExecuteProcess(
-            cmd=["gz", "sim", world],
+            cmd=["gz", "sim", "-r", world],
             output="screen"
         ),
 
@@ -60,6 +60,7 @@ def generate_launch_description():
                 "-name", "robot1",
                 "-topic", "/robot1/robot_description",
                 "-x", "0", "-y", "3.5", "-z", "0.05",
+                "-R", "0", "-P", "0", "-Y", "-1.5708",
             ],
         ),
 
@@ -82,6 +83,7 @@ def generate_launch_description():
                 "-name", "robot2",
                 "-topic", "/robot2/robot_description",
                 "-x", "0", "-y", "-3.5", "-z", "0.05",
+                "-R", "0", "-P", "0", "-Y", "1.5708"
             ],
         ),
     ])

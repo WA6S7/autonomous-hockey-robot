@@ -7,6 +7,9 @@
   <xacro:arg name="prefix" default=""/>
   <xacro:property name="prefix" value="$(arg prefix)"/>
 
+  <xacro:arg name="ns" default=""/>
+  <xacro:property name="ns" value="$(arg ns)"/>
+
 
   <!-- ========================= -->
   <!-- Dimensions -->
@@ -53,6 +56,7 @@
       <geometry>
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
+      <origin xyz=" 0 0 0.02" rpy = "0 0 0"/>
       <material name="Blue"/>
     </visual>
 
@@ -60,6 +64,7 @@
       <geometry>
         <box size="${base_length} ${base_width} ${base_height}"/>
       </geometry>
+      <origin xyz=" 0 0 0.02" rpy = "0 0 0"/>
     </collision>
 
     <inertial>
@@ -78,15 +83,15 @@
       <geometry>
         <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
       </geometry>
-      <origin rpy="0 1.5708 0"/>
+      <origin rpy="-1.5708 0 0"/>
       <material name="Black"/>
     </visual>
 
     <collision>
       <geometry>
-        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        <sphere radius="${wheel_radius}"/>
       </geometry>
-      <origin rpy="0 1.5708 0"/>
+      <origin rpy="-1.5708 0 0"/>
     </collision>
 
     <inertial>
@@ -111,13 +116,13 @@
       <geometry>
         <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
       </geometry>
-      <origin rpy="0 1.5708 0"/>
+      <origin rpy="-1.5708 0 0"/>
       <material name="Black"/>
     </visual>
 
     <collision>
       <geometry>
-        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        <sphere radius="${wheel_radius}"/>
       </geometry>
       <origin rpy="0 1.5708 0"/>
     </collision>
@@ -171,7 +176,7 @@
   <joint name="${prefix}front_left_caster_joint" type="fixed">
     <parent link="${prefix}base_link"/>
     <child link="${prefix}front_left_caster"/>
-    <origin xyz="${front_x} ${left_y} ${-base_height/2}"/>
+    <origin xyz="${front_x} ${left_y} ${-base_height/2 + caster_radius}"/>
   </joint>
 
   <!-- ========================= -->
@@ -209,7 +214,7 @@
   <joint name="${prefix}front_right_caster_joint" type="fixed">
     <parent link="${prefix}base_link"/>
     <child link="${prefix}front_right_caster"/>
-    <origin xyz="${front_x} ${right_y} ${-base_height/2}"/>
+    <origin xyz="${front_x} ${right_y} ${-base_height/2 + caster_radius}"/>
   </joint>
 
   <!-- ========================= -->
@@ -218,7 +223,7 @@
   <link name="${prefix}lidar_link">
     <visual>
       <geometry>
-        <cylinder radius="0.035" length="0.03"/>
+        <cylinder radius="0.035" length="0.01"/>
       </geometry>
       <origin rpy="0 0 0"/>
       <material name="Red"/>
@@ -226,47 +231,49 @@
 
     <collision>
       <geometry>
-        <cylinder radius="0.035" length="0.03"/>
+        <cylinder radius="0.035" length="0.01"/>
       </geometry>
     </collision>
 
     <inertial>
-      <mass value="0.1"/>
-      <inertia ixx="0.0001" iyy="0.0001" izz="0.0001"
-               ixy="0.0" ixz="0.0" iyz="0.0"/>
+      <mass value="1e-6"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="1e-6"     
+               ixy="0.0" ixz="0.0" iyz="0.0"/>   <!--0.0001-->
     </inertial>
   </link>
 
   <joint name="${prefix}lidar_joint" type="fixed">
     <parent link="${prefix}base_link"/>
     <child link="${prefix}lidar_link"/>
-    <origin xyz="0 0 ${base_height/2 + 0.02}"/>
+    <origin xyz="0 0 ${base_height/2 + 0.03}"/> <!--${base_height/2 + 0.02}-->
   </joint>
 
   <gazebo reference="${prefix}lidar_link">
-    <sensor type="gpu_lidar" name="lidar">
-      <topic>scan</topic>
-      <frame_id>${prefix}lidar_link</frame_id>
+    <sensor name="lidar" type="gpu_lidar" >
       <update_rate>10</update_rate>
-      <ray>
+      <topic>/${ns}/scan</topic>
+
+      <frame_id>${prefix}lidar_link</frame_id>
+      
+      <lidar>
         <scan>
           <horizontal>
             <samples>360</samples>
-            <min_angle>-3.14159</min_angle>
-            <max_angle>3.14159</max_angle>
+            <min_angle>-3.14</min_angle>
+            <max_angle>3.14</max_angle>
           </horizontal>
         </scan>
         <range>
-          <min>0.12</min>
+          <min>0.01</min>
           <max>8.0</max>
           <resolution>0.01</resolution>
         </range>
         <noise>
           <type>gaussian</type>
           <mean>0.0</mean>
-          <stddev>0.01</stddev>
+          <stddev>0.001</stddev>
         </noise>
-      </ray>
+      </lidar>
       <always_on>1</always_on>
       <visualize>true</visualize>
     </sensor>
@@ -291,7 +298,7 @@
 
   <gazebo reference="${prefix}imu_link">
     <sensor type="imu" name="imu">
-      <topic>imu</topic>
+      <topic>/${ns}/imu</topic>
       <frame_id>${prefix}imu_link</frame_id>
       <update_rate>100</update_rate>
       <always_on>1</always_on>
@@ -304,6 +311,7 @@
   <gazebo>
     <plugin filename="gz-sim-diff-drive-system"
             name="gz::sim::systems::DiffDrive">
+            <render_engine>ogre2</render_engine>
 
       <left_joint>${prefix}left_wheel_joint</left_joint>
       <right_joint>${prefix}right_wheel_joint</right_joint>
@@ -311,8 +319,8 @@
       <wheel_separation>${base_width}</wheel_separation>
       <wheel_radius>${wheel_radius}</wheel_radius>
 
-      <topic>cmd_vel</topic>
-      <odom_topic>odom</odom_topic>
+      <topic>/${ns}/cmd_vel</topic>
+      <odom_topic>/${ns}/odom</odom_topic>
       <odom_frame>odom</odom_frame>
       <robot_base_frame>${prefix}base_link</robot_base_frame>
       

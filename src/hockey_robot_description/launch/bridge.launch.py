@@ -11,7 +11,7 @@ def generate_launch_description():
         Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
-            arguments=["/robot1/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan"],
+            arguments=["/robot1/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan"],
             parameters=[{"use_sim_time": True}],
             output="screen"
         ),
@@ -27,7 +27,7 @@ def generate_launch_description():
         Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
-            arguments=["/robot1/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist"],
+            arguments=["/robot1/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist"],
             parameters=[{"use_sim_time": True}],
             output="screen"
         ),
@@ -38,7 +38,7 @@ def generate_launch_description():
         Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
-            arguments=["/robot2/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan"],
+            arguments=["/robot2/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan"],
             parameters=[{"use_sim_time": True}],
             output="screen"
         ),
@@ -54,7 +54,7 @@ def generate_launch_description():
         Node(
             package="ros_gz_bridge",
             executable="parameter_bridge",
-            arguments=["/robot2/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist"],
+            arguments=["/robot2/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist"],
             parameters=[{"use_sim_time": True}],
             output="screen"
         ),
