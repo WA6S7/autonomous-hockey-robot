@@ -80,10 +80,3 @@ Confirm the robot cmd_vel is updating:
 --------------------------------
 source ~/autonomous-hockey-robot/install/setup.bash
 ros2 topic hz /robot1/cmd_vel
-
-
-
-
-
-Git push password thing:
-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
