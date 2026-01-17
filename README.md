@@ -2,6 +2,7 @@
 **ARI3215 Robotics 2 – University of Malta**
 
 ## Student 1 – Simulation & Robot Modelling
+## Student 2 – Puck Detection & Tracking
 
 ---
 
@@ -98,7 +99,39 @@ Location: hockey_robot_description/launch/spawn_robots.launch.py
   - `/cmd_vel`
 - Supports real-time interaction between control nodes and simulation
 
-Location: hockey_robot_description/launch/bridge.launch.py
+---
+
+**Student 2** is responsible for the **implementation of the puck detection and tracking**.  
+This includes writing a puck detection script, to be able to detect the puck using a LiDAR sensor. Once this is implemented successfully, a puck tracking script is implemented to be able to track the puck movement during execution. 
+
+The work focuses on having a reliable and accurate puck detection and tracking system.
+
+## Responsibilities
+
+### 1. Puck Detection and Tracking Script
+- Integrated the `lidar_puck_detector.py`
+  - Detects and tracks the puck
+
+Location: hockey_perception/hockey_perception/lidar_puck_detector.py
 
 
+---
 
+### 2. Bringup File
+- Created a singular bringup file to avoid a multiple terminal system.
+- **Important:** Due to hardware restrictions and the software being used, sometime not all the files manage to launch.
+
+Location: hockey_robot_description/launch/hockey_bringup.launch.py
+
+
+---
+
+### Edited Previous Code
+- Made minor changes in:
+  - `bridge.launch.py`: changes in Laserscan arguments.
+  - `spawn_robots.launch.py`: changes in robots' spawning orientation.
+  - `hockey_robot.urdf.xacro`: Raised the base slightly off the ground, fixed rear-wheel orientation, and minor changes to the LiDAR.
+  - `hockey_arena.sdf`: added physics, plugins, and changed the **puck** to a **ball**.
+
+
+---
