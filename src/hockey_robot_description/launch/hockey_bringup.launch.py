@@ -24,7 +24,7 @@ def generate_launch_description():
         parameters=[{
             "scan_topic": "/robot1/scan",
             "puck_pose_topic": "/robot1/puck_pose_lidar",
-            "use_sim_time": use_sim_time,
+            "use_sim_time": True,
         }],
     )
 
@@ -36,33 +36,10 @@ def generate_launch_description():
         parameters=[{
             "scan_topic": "/robot2/scan",
             "puck_pose_topic": "/robot2/puck_pose_lidar",
-            "use_sim_time": use_sim_time,
+            "use_sim_time": True,
         }],
     )
 
-    chaser_r1 = Node(
-        package="hockey_perception",
-        executable="puck_chaser",
-        name="puck_chaser_r1",
-        output="screen",
-        parameters=[{
-            "target_topic": "/robot1/puck_pose_lidar",
-            "cmd_vel_topic": "/robot1/cmd_vel",
-            "use_sim_time": use_sim_time,
-        }],
-    )
-
-    chaser_r2 = Node(
-        package="hockey_perception",
-        executable="puck_chaser",
-        name="puck_chaser_r2",
-        output="screen",
-        parameters=[{
-            "target_topic": "/robot2/puck_pose_lidar",
-            "cmd_vel_topic": "/robot2/cmd_vel",
-            "use_sim_time": use_sim_time,
-        }],
-    )
 
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="true"),
@@ -77,7 +54,5 @@ def generate_launch_description():
         TimerAction(period=2.0, actions=[
             detector_r1,
             detector_r2,
-            chaser_r1,
-            chaser_r2,
         ]),
     ])

@@ -25,7 +25,6 @@ setup(
     entry_points={
         'console_scripts': [
             'lidar_puck_detector = hockey_perception.lidar_puck_detector:main',
-            'puck_chaser = hockey_perception.puck_chaser:main',
         ],
     },
 )
