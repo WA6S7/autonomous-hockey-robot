@@ -41,6 +41,16 @@ def generate_launch_description():
     )
 
 
+
+    # Puck kicker node
+    puck_kicker = Node(
+        package="hockey_control",
+        executable="puck_kicker",
+        name="puck_kicker",
+        output="screen",
+        parameters=[{"use_sim_time": True}],
+    )
+
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="true"),
 
@@ -50,9 +60,37 @@ def generate_launch_description():
         # Start bridges
         IncludeLaunchDescription(PythonLaunchDescriptionSource(bridge_launch)),
 
+
+        # Start FSM for robot1
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([FindPackageShare("hockey_control"), "launch", "fsm.launch.py"])
+            ),
+            launch_arguments={
+                'robot_name': 'robot1',
+                'scan_topic': 'scan',
+                'puck_topic': 'puck_pose_lidar',
+                'goal_y': '-4.5'
+            }.items()
+        ),
+
+        # Start FSM for robot2
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([FindPackageShare("hockey_control"), "launch", "fsm.launch.py"])
+            ),
+            launch_arguments={
+                'robot_name': 'robot2',
+                'scan_topic': 'scan',
+                'puck_topic': 'puck_pose_lidar',
+                'goal_y': '4.5'
+            }.items()
+        ),
+
         # Small delay helps avoid “topic not ready yet” races at startup
         TimerAction(period=2.0, actions=[
             detector_r1,
             detector_r2,
+            puck_kicker,
         ]),
     ])

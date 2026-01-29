@@ -69,4 +69,15 @@ def generate_launch_description():
             parameters=[{"use_sim_time": True}],
             output="screen"
         ),
+
+        # ==========================
+        # CLOCK BRIDGE (for synchronization)
+        # ==========================
+        Node(
+            package="ros_gz_bridge",
+            executable="parameter_bridge",
+            arguments=["/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"],
+            parameters=[{"use_sim_time": True}],
+            output="screen"
+        ),
     ])

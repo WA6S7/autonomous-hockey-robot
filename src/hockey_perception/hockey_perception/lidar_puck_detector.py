@@ -36,9 +36,9 @@ class LidarPuckDetector(Node):
         # IMPORTANT: Despite the name, `puck_diameter` is the expected apparent diameter in the 2D scan plane.
         # For a ball (sphere), that may be less than the real sphere diameter depending on lidar height.
         #
-        self.declare_parameter('puck_diameter', 0.3)            # in meters 
-        self.declare_parameter('diameter_tol', 0.06)            # +/- tolerance in meters
-        self.declare_parameter('cluster_gap', 0.05)             # split clusters if adjacent points separated by this (m)
+        self.declare_parameter('puck_diameter', 0.22)            # in meters 
+        self.declare_parameter('diameter_tol', 0.10)            # +/- tolerance in meters
+        self.declare_parameter('cluster_gap', 0.15)             # split clusters if adjacent points separated by this (m)
         self.declare_parameter('min_points', 3)                 # reject tiny clusters
         self.declare_parameter('range_min', 0.02)               # ignore anything closer than this (m)
         self.declare_parameter('range_max', 8.0)                # ignore anything beyond this (m)
@@ -87,6 +87,8 @@ class LidarPuckDetector(Node):
                 points.append((math.nan, math.nan))
             a += msg.angle_increment
 
+        num_valid = sum(1 for p in points if math.isfinite(p[0]))
+        
         clusters = self.cluster_points(points, gap=float(self.get_parameter('cluster_gap').value))
 
         best = self.pick_puck_cluster(
@@ -97,9 +99,16 @@ class LidarPuckDetector(Node):
         )
 
         if best is None:
+            if num_valid > 0:
+                # Log information about the clusters found to help diagnose why none matched the puck
+                self.get_logger().info(f"Puck not found! Total clusters: {len(clusters)}, Valid points: {num_valid}")
+                for i, c in enumerate(clusters[:5]): # Log first 5 clusters
+                     width = self._cluster_width_bbox_diag(c)
+                     self.get_logger().info(f"  - Cluster {i}: pts={len(c)}, width={width:.3f}m")
             self._handle_measurement(None, now=now, header=msg.header)
         else:
             cx, cy = best
+            self.get_logger().info(f"SUCCESS: Puck detected at ({cx:.2f}, {cy:.2f})")
             self._handle_measurement((cx, cy), now=now, header=msg.header)
 
 
@@ -187,6 +196,7 @@ class LidarPuckDetector(Node):
         self._missed = 0
 
     def _reset_track(self) -> None:
+        self.get_logger().warn("Tracking lost, resetting.")
         self._x = None
         self._P = None
         self._last_t = None
@@ -270,29 +280,24 @@ class LidarPuckDetector(Node):
     def cluster_points(points: List[Tuple[float, float]], gap: float) -> List[List[Tuple[float, float]]]:
         clusters: List[List[Tuple[float, float]]] = []
         cur: List[Tuple[float, float]] = []
-        prev: Optional[Tuple[float, float]] = None
-
+        
         for p in points:
+            # Skip invalid points entirely instead of breaking clusters.
+            # This makes clustering robust to missing data points on the object.
             if not (math.isfinite(p[0]) and math.isfinite(p[1])):
-                if cur:
-                    clusters.append(cur)
-                    cur = []
-                prev = None
                 continue
 
-            if prev is None:
+            if not cur:
                 cur.append(p)
             else:
+                prev = cur[-1]
                 dx = p[0] - prev[0]
                 dy = p[1] - prev[1]
                 if math.hypot(dx, dy) > gap:
-                    if cur:
-                        clusters.append(cur)
+                    clusters.append(cur)
                     cur = [p]
                 else:
                     cur.append(p)
-
-            prev = p
 
         if cur:
             clusters.append(cur)
