@@ -28,8 +28,9 @@ class LidarPuckDetector(Node):
         super().__init__('lidar_puck_detector')
 
         # Topics
-        self.declare_parameter('scan_topic', '/robot1/scan')
-        self.declare_parameter('puck_pose_topic', '/robot1/puck_pose_lidar')
+        self.declare_parameter('scan_topic', 'scan')
+        self.declare_parameter('puck_pose_topic', 'puck_pose_lidar')
+
 
         # Geometry / tuning
         #
@@ -48,7 +49,7 @@ class LidarPuckDetector(Node):
         self.declare_parameter('max_missed_scans', 6)           # reset track after this many consecutive misses
 
         # Noise tuning 
-        self.declare_parameter('meas_noise_std', 0.05)          # measurement std-dev on (x,y)
+        self.declare_parameter('meas_noise_std', 0.05)          # measurement position std-dev
         self.declare_parameter('accel_noise_std', 2.0)          # process accel std-dev (white acceleration)
         self.declare_parameter('init_pos_std', 0.10)            # initial position std-dev
         self.declare_parameter('init_vel_std', 1.00)            # initial velocity std-dev

@@ -1,15 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>hockey_perception</name>
+  <name>hockey_control</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="jeremy.galea.23@um.edu.mt">jeremy</maintainer>
+  <maintainer email="liam-jake@todo.todo">liam-jake</maintainer>
   <license>TODO: License declaration</license>
-
-  <depend>rclpy</depend>
-  <depend>sensor_msgs</depend>
-  <depend>geometry_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
