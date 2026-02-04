@@ -223,4 +223,4 @@ The project demonstrates core robotics AI concepts including:
 ---
 
 ## Academic Integrity
-All work is original and developed for **ARI3215 Robotics 2**. Standard ROS 2 and Gazebo libraries are utilized in accordance with their official documentation and licensing.
+All work is original and developed for **ARI3215 Robotics 2**. Standard ROS 2 and Gazebo libraries are utilised in accordance with their official documentation and licensing.
