@@ -3,9 +3,9 @@
 <package format="3">
   <name>hockey_perception</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="jeremy.galea.23@um.edu.mt">jeremy</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Package for puck detection and tracking</description>
+  <maintainer email="jeremy.galea.23@um.edu.mt">Jeremy Galea</maintainer>
+  <license>MIT License</license>
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>

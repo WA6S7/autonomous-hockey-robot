@@ -3,8 +3,8 @@
   <name>hockey_world</name>
   <version>0.0.0</version>
   <description>Hockey arena world for the hockey robot simulation</description>
-  <maintainer email="nikolina@todo.todo">nikolina</maintainer>
-  <license>MIT</license>
+  <maintainer email="nikolina.filipov-pajic.23@um.edu.mt">Nikolina Filipov Pajic</maintainer>
+  <license>MIT License</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
